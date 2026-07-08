@@ -1,0 +1,42 @@
+name: Python CI
+
+# Triggers the workflow on any push to the main branch or on pull requests targeting the main branch
+
+on:
+  push: ## event that triggers the workflow  --> Event might be a push, pull, merge and delete -> tiggger workflow
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      ## -- staging, dev, test, prod -- ## we can also add multiple branches here
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on:
+      ubuntu-latest ## --> container like  job runs on a GitHub-hosted VM, not directly in Docker.
+      ## we also have windows-latest and macos-latest
+
+    steps:
+      # Step 1 : Checkout the code from the repository
+      - uses: actions/checkout@v4 ## provided by GitHub action
+
+      # Step 2 : Set up python environment
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3 ## provided by GitHub action
+        with:
+          python-version: "3.10"
+
+      # Step 3 : Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4 : Run tests
+      - name: Test with pytest
+        run: |
+          pytest
